@@ -11,12 +11,12 @@
       font-family: 'Roboto', sans-serif;
       background-color: #000000;
       color: #ffffff;
+      text-align: center;
     }
     header {
       background: #083468;
       color: white;
       padding: 1em;
-      text-align: center;
     }
     nav {
       display: flex;
@@ -49,7 +49,6 @@
     footer {
       background: #0a2f57;
       color: white;
-      text-align: center;
       padding: 1em;
     }
     .socials a {
@@ -58,7 +57,6 @@
       text-decoration: none;
     }
     .cta {
-      text-align: center;
       margin: 2em 0;
     }
     button {
@@ -72,6 +70,18 @@
     }
     button:hover {
       background: #0d4a9b;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    ul li {
+      margin: 0.5em 0;
+    }
+    blockquote {
+      font-style: italic;
+      margin: 1em auto;
+      max-width: 700px;
     }
   </style>
 </head>
@@ -126,7 +136,7 @@
   <section id="book" class="cta">
     <h2>Ready to Go Live?</h2>
     <p>Get in touch today and let's make your event unforgettable.</p>
-    <button onclick="window.location.href='mailto:your@email.com'">Book Now</button>
+    <button onclick="window.location.href='https://livestreamingcanberra.setmore.com/?source=facebook&fbclid=IwY2xjawK80MhleHRuA2FlbQIxMABicmlkETFOZXg2MkhrSmdRTzBCcWlOAR5OSRTQDbwFqPRTse3OwtP93Q9pscMuyv3uIbiO2qsL9KVX-CeGCqjBTQN-yA_aem_x7Kfe43JDWUTIBD-t1l6bw'">Book Now</button>
   </section>
 
   <footer>
@@ -139,8 +149,8 @@
   </footer>
 
   <script>
-    const channelId = 'UC5fxY7ausirEI6mg3_qEpbA';
-    const apiKey = 'AIzaSyDnU9WvwaGZ79SbIF8pr9sfiSsw1lm6oqM'; // Replace this with your real YouTube Data API v3 key
+    const channelId = 'UCU1iW2MHh5vs1mekv-dkk5g';
+    const apiKey = 'AIzaSyDnU9WvwaGZ79SbIF8pr9sfiSsw1lm6oqM';
 
     async function fetchVideos(eventType = '') {
       const baseUrl = 'https://www.googleapis.com/youtube/v3/search';
@@ -198,9 +208,8 @@
       });
     }
 
-    // Load on page load and refresh every 30 seconds
     loadStreams();
-    setInterval(loadStreams, 30000);
+    setInterval(loadStreams, 30000); // refresh every 30 seconds
   </script>
 </body>
 </html>
