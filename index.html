@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Live Streaming Canberra</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -38,10 +38,14 @@
       max-width: 1000px;
       margin: auto;
     }
-    .live-streams {
+    /* Updated live-streams container to grid layout */
+    #streamsContainer {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 1em;
+    }
+    #streamsContainer iframe {
+      border-radius: 8px;
     }
     footer {
       background: #0a2f57;
@@ -74,7 +78,7 @@
 </head>
 <body>
   <header>
-    <img src="LSC Logo.png" alt="Live Streaming Canberra Logo" style="height:80px">
+    <img src="LSC Logo.png" alt="Live Streaming Canberra Logo" style="height:80px" />
     <h1>Live Streaming Canberra</h1>
     <p>Canberra's Premium Live Streaming Service</p>
   </header>
@@ -89,14 +93,17 @@
 
   <section id="home">
     <h2>Welcome to Live Streaming Canberra</h2>
-    <p>We bring your event to screens across the globe with professional, high-quality live streaming services. Whether it's a corporate event, wedding, sports game or performance — we've got you covered.</p>
+    <p>
+      We bring your event to screens across the globe with professional, high-quality live streaming services.
+      Whether it's a corporate event, wedding, sports game or performance — we've got you covered.
+    </p>
   </section>
 
   <section id="live">
     <h2>Live Streams</h2>
-    <p>Watch our latest live streams and recordings straight from our YouTube channel.</p>
-    <div class="live-streams">
-      <iframe width="100%" height="315" src="https://www.youtube.com/embed?listType=user_uploads&list=UCU1iW2MHh5vs1mekv-dkk5g" frameborder="0" allowfullscreen></iframe>
+    <p>Watch our current and past live streams straight from our YouTube channel.</p>
+    <div id="streamsContainer">
+      <!-- Live stream iframes will be inserted here -->
     </div>
   </section>
 
@@ -131,5 +138,77 @@
       <a href="https://youtube.com/YourChannel">YouTube</a>
     </div>
   </footer>
+
+  <script>
+    const channelId = 'UCU1iW2MHh5vs1mekv-dkk5g'; // Your YouTube Channel ID
+    const apiKey = 'AIzaSyDnU9WvwaGZ79SbIF8pr9sfiSsw1lm6oqM'; // Replace with your YouTube Data API key
+
+    async function fetchVideos(eventType = '') {
+      const baseUrl = 'https://www.googleapis.com/youtube/v3/search';
+      let url = `${baseUrl}?part=snippet&channelId=${channelId}&type=video&order=date&maxResults=20&key=${apiKey}`;
+      if (eventType) {
+        url += `&eventType=${eventType}`;
+      }
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.items || [];
+    }
+
+    async function loadStreams() {
+      const container = document.getElementById('streamsContainer');
+      container.innerHTML = '';
+
+      // Fetch current live streams
+      const liveVideos = await fetchVideos('live');
+
+      // Fetch recent videos and filter for completed live streams
+      const recentVideos = await fetchVideos();
+      const pastLiveVideos = recentVideos.filter(
+        (video) => video.snippet.liveBroadcastContent === 'completed'
+      );
+
+      // Combine live and past live videos (live first)
+      const allStreams = [...liveVideos, ...pastLiveVideos];
+
+      if (allStreams.length === 0) {
+        container.innerHTML = '<p style="color:white;">No live or past live streams available.</p>';
+        return;
+      }
+
+      // Generate iframe embeds
+      allStreams.forEach((video) => {
+        const videoId = video.id.videoId;
+        const title = video.snippet.title;
+
+        const div = document.createElement('div');
+        div.style.background = '#111';
+        div.style.padding = '10px';
+        div.style.borderRadius = '8px';
+
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = title;
+        titleEl.style.color = 'white';
+        titleEl.style.fontSize = '1rem';
+        titleEl.style.marginBottom = '0.5rem';
+
+        const iframe = document.createElement('iframe');
+        iframe.width = '100%';
+        iframe.height = '200';
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        iframe.frameBorder = '0';
+        iframe.allowFullscreen = true;
+
+        div.appendChild(titleEl);
+        div.appendChild(iframe);
+        container.appendChild(div);
+      });
+    }
+
+    // Load streams on page load
+    loadStreams();
+
+    // Optionally refresh every 10 minutes
+    setInterval(loadStreams, 10 * 60 * 1000);
+  </script>
 </body>
 </html>
